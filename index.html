@@ -1,108 +1,225 @@
-<!DOCTYPE html><html lang="vi">
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Casino Style Game – Virtual Coins (Demo)</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .card {
-      background: #020617;
-      padding: 24px;
-      border-radius: 16px;
-      width: 340px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.5);
-      text-align: center;
-    }
-    h1 { margin-top: 0; }
-    .reels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 48px;
-      margin: 20px 0;
-    }
-    .reel {
-      width: 80px;
-      background: #020617;
-      border: 2px solid #334155;
-      border-radius: 12px;
-      padding: 10px 0;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      background: #22c55e;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:disabled { background: #475569; cursor: not-allowed; }
-    .info { margin-top: 12px; }
-    .small { font-size: 12px; color: #94a3b8; margin-top: 10px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Casino - Slot Machine</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #222;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            color: #FFD700;
+            text-shadow: 2px 2px #ff0000;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            border: 5px solid #FFD700;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .slot-container {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .reel {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: #333;
+            border: 3px solid #555;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.1s;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #b33939;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #b33939;
+        }
+
+        button:disabled {
+            background-color: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .stats {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+
+        .money {
+            color: #2ed573;
+            font-weight: bold;
+        }
+
+        #message {
+            height: 30px;
+            margin-top: 10px;
+            color: #FFD700;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Slot Demo 🎰</h1>
-    <div class="reels">
-      <div class="reel" id="r1">🍒</div>
-      <div class="reel" id="r2">🍋</div>
-      <div class="reel" id="r3">🔔</div>
+
+    <h1>🎰 CASINO ROYAL 🎰</h1>
+
+    <div class="container">
+        <div class="stats">
+            Số dư: <span id="balance" class="money">$100</span> | Cược: <span id="bet">$10</span>
+        </div>
+
+        <div class="slot-container">
+            <div class="reel" id="reel1">🍒</div>
+            <div class="reel" id="reel2">🍒</div>
+            <div class="reel" id="reel3">🍒</div>
+        </div>
+
+        <div id="message">Nhấn QUAY để bắt đầu!</div>
+
+        <div class="controls">
+            <button id="spinBtn" onclick="spin()">QUAY ($10)</button>
+        </div>
     </div>
-    <button id="spinBtn">Quay (–10 coin)</button>
-    <div class="info">
-      <div>Số dư: <strong><span id="balance">100</span> coin</strong></div>
-      <div id="result"></div>
-    </div>
-    <div class="small">Chỉ là game mô phỏng dùng tiền ảo – không cá cược, không tiền thật.</div>
-  </div>  <script>
-    const symbols = ["🍒", "🍋", "🔔", "⭐", "7️⃣"];
-    let balance = 100;
 
-    const r1 = document.getElementById('r1');
-    const r2 = document.getElementById('r2');
-    const r3 = document.getElementById('r3');
-    const balanceEl = document.getElementById('balance');
-    const resultEl = document.getElementById('result');
-    const spinBtn = document.getElementById('spinBtn');
+    <script>
+        // Cấu hình game
+        let balance = 100;
+        const betCost = 10;
+        const symbols = ["🍒", "🍋", "🍉", "⭐", "💎", "7️⃣"];
+        
+        // Tỷ lệ xuất hiện (càng ít càng hiếm)
+        // Mảng này giúp 7️⃣ và 💎 khó ra hơn 🍒
+        const weightedSymbols = [
+            "🍒", "🍒", "🍒", "🍒", "🍒",
+            "🍋", "🍋", "🍋", "🍋",
+            "🍉", "🍉", "🍉",
+            "⭐", "⭐",
+            "💎", "💎",
+            "7️⃣"
+        ];
 
-    function randomSymbol() {
-      return symbols[Math.floor(Math.random() * symbols.length)];
-    }
+        const reel1 = document.getElementById('reel1');
+        const reel2 = document.getElementById('reel2');
+        const reel3 = document.getElementById('reel3');
+        const balanceDisplay = document.getElementById('balance');
+        const messageDisplay = document.getElementById('message');
+        const spinBtn = document.getElementById('spinBtn');
 
-    spinBtn.onclick = () => {
-      if (balance < 10) {
-        resultEl.textContent = 'Hết coin! Tải lại trang để chơi lại.';
-        spinBtn.disabled = true;
-        return;
-      }
+        function getRandomSymbol() {
+            const randomIndex = Math.floor(Math.random() * weightedSymbols.length);
+            return weightedSymbols[randomIndex];
+        }
 
-      balance -= 10;
-      r1.textContent = randomSymbol();
-      r2.textContent = randomSymbol();
-      r3.textContent = randomSymbol();
+        function spin() {
+            if (balance < betCost) {
+                messageDisplay.innerText = "Bạn đã hết tiền! Hãy F5 để chơi lại.";
+                messageDisplay.style.color = "red";
+                return;
+            }
 
-      if (r1.textContent === r2.textContent && r2.textContent === r3.textContent) {
-        balance += 50;
-        resultEl.textContent = '🎉 Trúng lớn! +50 coin';
-      } else if (r1.textContent === r2.textContent || r2.textContent === r3.textContent) {
-        balance += 20;
-        resultEl.textContent = '👍 Trúng nhỏ! +20 coin';
-      } else {
-        resultEl.textContent = '😅 Không trúng';
-      }
+            // Trừ tiền cược
+            balance -= betCost;
+            updateBalance();
+            messageDisplay.innerText = "Đang quay...";
+            spinBtn.disabled = true;
 
-      balanceEl.textContent = balance;
-    };
-  </script></body>
+            // Hiệu ứng quay số (thay đổi icon liên tục trong 1 giây)
+            let count = 0;
+            const interval = setInterval(() => {
+                reel1.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                reel2.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                reel3.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                count++;
+                
+                if (count > 20) { // Dừng sau 20 lần đổi (khoảng 1 giây)
+                    clearInterval(interval);
+                    finalizeSpin();
+                }
+            }, 50);
+        }
+
+        function finalizeSpin() {
+            // Kết quả cuối cùng
+            const r1 = getRandomSymbol();
+            const r2 = getRandomSymbol();
+            const r3 = getRandomSymbol();
+
+            reel1.innerText = r1;
+            reel2.innerText = r2;
+            reel3.innerText = r3;
+
+            checkWin(r1, r2, r3);
+            spinBtn.disabled = false;
+        }
+
+        function checkWin(s1, s2, s3) {
+            if (s1 === s2 && s2 === s3) {
+                let winAmount = 0;
+                if (s1 === "7️⃣") winAmount = 500;
+                else if (s1 === "💎") winAmount = 200;
+                else if (s1 === "⭐") winAmount = 100;
+                else winAmount = 50;
+
+                balance += winAmount;
+                messageDisplay.innerText = JACKPOT! Bạn thắng $${winAmount}! 🎉;
+                messageDisplay.style.color = "#FFD700";
+            } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+                // Thắng nhỏ (2 biểu tượng giống nhau)
+                let winAmount = 15;
+                balance += winAmount;
+                messageDisplay.innerText = Thắng nhỏ! Bạn nhận $${winAmount}.;
+                messageDisplay.style.color = "#fff";
+            } else {
+                messageDisplay.innerText = "Chúc may mắn lần sau!";
+                messageDisplay.style.color = "#aaa";
+            }
+            updateBalance();
+        }
+
+        function updateBalance() {
+            balanceDisplay.innerText = "$" + balance;
+        }
+    </script>
+</body>
 </html>
